@@ -5,6 +5,7 @@ import Footer from './components/Footer';
 import Services from './pages/Services';
 import Contact from './pages/Contact';
 import Home from './pages/Home';
+import { LanguageProvider } from './contexts/LanguageContext';
 
 const App: React.FC = () => {
   const [isDarkMode, setIsDarkMode] = useState<boolean>(() => {
@@ -22,18 +23,20 @@ const App: React.FC = () => {
   };
 
   return (
-    <Router>
-      <div className="flex flex-col min-h-screen">
-        <Header toggleDarkMode={toggleDarkMode} isDarkMode={isDarkMode} />
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/services" element={<Services />} />
-          <Route path="/contact" element={<Contact />} />
-        </Routes>
-        <Footer />
-      </div>
-    </Router>
+    <LanguageProvider>
+      <Router>
+        <div className="flex flex-col min-h-screen">
+          <Header toggleDarkMode={toggleDarkMode} isDarkMode={isDarkMode} />
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/services" element={<Services />} />
+            <Route path="/contact" element={<Contact />} />
+          </Routes>
+          <Footer />
+        </div>
+      </Router>
+    </LanguageProvider>
   );
 }
 
-export default App
+export default App;

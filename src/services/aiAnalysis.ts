@@ -22,7 +22,7 @@ export const analyzeSecurityIncident = async (incident: SecurityIncident): Promi
     Mantenha a resposta concisa e prática, adaptando a linguagem técnica ao perfil do usuário.`;
 
     const geminiPrompt = `Como especialista em TI e segurança da Macartech, analise este cenário: ${description}
-    Forneça em português:
+    Forneça:
     1. Avaliação rápida do problema
     2. Recomendações práticas e objetivas
     3. Medidas de proteção sugeridas

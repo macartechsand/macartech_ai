@@ -13,21 +13,21 @@ export const analyzeSecurityIncident = async (incident: SecurityIncident): Promi
   try {
     const description = incident.description;
 
-    const openAIPrompt = `Você é um especialista de Tecnologia e cibersegurança da Macartech responda somente sobre os assuntos pertinentes de sua função que é auxiliar os clientes para temas de tecnologia e cibersegurança qualquer assunto fora do contexto você deve responder que só pode auxiliar com base no seu escopo. Analise o seguinte problema: ${description}.
-    Forneça uma resposta objetiva com:
-    1. Diagnóstico inicial do problema
-    2. Possíveis causas e riscos associados
-    3. Recomendações técnicas imediatas
-    4. Próximos passos sugeridos
-    Mantenha a resposta concisa e prática, adaptando a linguagem técnica ao perfil do usuário.`;
+    const openAIPrompt = `You are a Technology and Cybersecurity expert at Macartech. Only respond about topics relevant to your function, which is to assist clients with technology and cybersecurity themes. For any topic outside this context, you should respond that you can only assist based on your scope. Analyze the following problem: ${description}.
+    Provide an objective response with:
+    1. Initial diagnosis of the problem
+    2. Possible causes and associated risks
+    3. Immediate technical recommendations
+    4. Suggested next steps
+    Keep the response concise and practical, adapting technical language to the user's profile.`;
 
-    const geminiPrompt = `Como especialista em TI e segurança da Macartech, analise este cenário: ${description}
-    Forneça:
-    1. Avaliação rápida do problema
-    2. Recomendações práticas e objetivas
-    3. Medidas de proteção sugeridas
-    4. Orientações para prevenção futura
-    Priorize clareza e objetividade, mantendo foco em soluções práticas.`;
+    const geminiPrompt = `As an IT and security expert at Macartech, analyze this scenario: ${description}
+    Provide:
+    1. Quick problem assessment
+    2. Practical and objective recommendations
+    3. Suggested protection measures
+    4. Future prevention guidelines
+    Prioritize clarity and objectivity, focusing on practical solutions.`;
 
     let openAIResponse = '';
     let geminiResponse = '';
@@ -46,16 +46,14 @@ export const analyzeSecurityIncident = async (incident: SecurityIncident): Promi
       console.warn('Gemini analysis failed:', geminiError);
     }
 
-    // Logs de depuração
     console.log("🧠 OpenAI response:", openAIResponse);
     console.log("🔮 Gemini response:", geminiResponse);
 
-    // Se nenhuma IA respondeu, retorna fallback
     if (!openAIResponse.trim() && !geminiResponse.trim()) {
       usedFallback = true;
       return {
         ...generateFallbackAnalysis(incident),
-        errorMessage: "Nossos serviços de análise estão temporariamente indisponíveis. Por favor, tente novamente mais tarde ou entre em contato com nosso suporte."
+        errorMessage: "Our analysis services are temporarily unavailable. Please try again later or contact our support."
       };
     }
 
@@ -67,18 +65,18 @@ export const analyzeSecurityIncident = async (incident: SecurityIncident): Promi
       recommendations: combinedAnalysis.recommendations,
       severity,
       escalationRequired: severity >= SeverityLevel.HIGH,
-      contactRecommendation: "Um especialista da Macartech entrará em contato para fornecer assistência personalizada.",
+      contactRecommendation: "A Macartech specialist will contact you to provide personalized assistance.",
       aiResponses: {
-        chatgpt: openAIResponse || "Serviço temporariamente indisponível",
-        gemini: geminiResponse || "Serviço temporariamente indisponível"
+        chatgpt: openAIResponse || "Service temporarily unavailable",
+        gemini: geminiResponse || "Service temporarily unavailable"
       },
       usedFallback
     };
   } catch (error: any) {
-    console.error('Erro na análise com IA:', error);
+    console.error('Error in AI analysis:', error);
     return {
       ...generateFallbackAnalysis(incident),
-      errorMessage: "Ocorreu um erro durante a análise. Nossa equipe foi notificada e está trabalhando para resolver o problema."
+      errorMessage: "An error occurred during analysis. Our team has been notified and is working to resolve the issue."
     };
   }
 };
@@ -89,7 +87,7 @@ async function getOpenAIAnalysis(prompt: string) {
     messages: [
       {
         role: "system",
-        content: "Você é um assistente especializado em cibersegurança e tecnologia da Macartech. Seu objetivo é ajudar usuários a entenderem riscos digitais e soluções de proteção. Use linguagem clara e acessível, adaptando o nível técnico ao contexto."
+        content: "You are a specialized cybersecurity and technology assistant at Macartech. Your goal is to help users understand digital risks and protection solutions. Use clear and accessible language, adapting the technical level to the context."
       },
       {
         role: "user",
@@ -102,7 +100,7 @@ async function getOpenAIAnalysis(prompt: string) {
 
   const content = completion.choices?.[0]?.message?.content;
   if (!content || !content.trim()) {
-    throw new Error("OpenAI retornou resposta vazia");
+    throw new Error("OpenAI returned empty response");
   }
 
   return content;
@@ -114,12 +112,12 @@ async function getGeminiAnalysis(prompt: string) {
   const response = await result.response;
 
   if (!response || typeof response.text !== 'function') {
-    throw new Error('Formato inesperado de resposta da Gemini');
+    throw new Error('Unexpected response format from Gemini');
   }
 
   const text = await response.text();
   if (!text || !text.trim()) {
-    throw new Error('Gemini retornou resposta vazia');
+    throw new Error('Gemini returned empty response');
   }
 
   return text;
@@ -154,10 +152,10 @@ function generateEnhancedSummary(openAI: string, gemini: string): string {
 
 function calculateSeverity(analysis: { summary: string; recommendations: string[] }): SeverityLevel {
   const indicators = {
-    critical: ['crítico', 'urgente', 'grave', 'comprometido', 'invasão'],
-    high: ['alto', 'importante', 'risco elevado'],
-    medium: ['médio', 'moderado', 'atenção'],
-    low: ['baixo', 'menor', 'preventivo']
+    critical: ['critical', 'urgent', 'severe', 'compromised', 'breach'],
+    high: ['high', 'important', 'elevated risk'],
+    medium: ['medium', 'moderate', 'attention'],
+    low: ['low', 'minor', 'preventive']
   };
 
   const fullText = (analysis.summary + ' ' + analysis.recommendations.join(' ')).toLowerCase();
@@ -170,20 +168,20 @@ function calculateSeverity(analysis: { summary: string; recommendations: string[
 
 function generateFallbackAnalysis(incident: SecurityIncident): AIAnalysisResult {
   return {
-    summary: "Análise inicial baseada em padrões de segurança estabelecidos.",
+    summary: "Initial analysis based on established security patterns.",
     recommendations: [
-      "Realize uma verificação completa do sistema.",
-      "Ative autenticação de dois fatores.",
-      "Atualize todos os sistemas e softwares.",
-      "Faça backup regular dos dados importantes.",
-      "Implemente monitoramento contínuo."
+      "Perform a complete system check.",
+      "Enable two-factor authentication.",
+      "Update all systems and software.",
+      "Regularly backup important data.",
+      "Implement continuous monitoring."
     ],
     severity: SeverityLevel.MEDIUM,
     escalationRequired: true,
-    contactRecommendation: "Um especialista da Macartech entrará em contato para fornecer assistência personalizada.",
+    contactRecommendation: "A Macartech specialist will contact you to provide personalized assistance.",
     aiResponses: {
-      chatgpt: "Serviço temporariamente indisponível",
-      gemini: "Serviço temporariamente indisponível"
+      chatgpt: "Service temporarily unavailable",
+      gemini: "Service temporarily unavailable"
     }
   };
 }

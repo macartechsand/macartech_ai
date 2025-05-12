@@ -13,13 +13,13 @@ export const analyzeSecurityIncident = async (incident: SecurityIncident): Promi
   try {
     const description = incident.description;
 
-    const openAIPrompt = `Você é um especialista de Tecnologia e cibersegurança da Macartech. Analise o seguinte problema: ${description}.
+    const openAIPrompt = `Você é um especialista de Tecnologia e cibersegurança da Macartech responda somente sobre os assuntos pertinentes de sua função que é auxiliar os clientes para temas de tecnologia e cibersegurança qualquer assunto fora do contexto você deve responder que só pode auxiliar com base no seu escopo. Analise o seguinte problema: ${description}.
     Forneça uma resposta objetiva com:
     1. Diagnóstico inicial do problema
     2. Possíveis causas e riscos associados
     3. Recomendações técnicas imediatas
     4. Próximos passos sugeridos
-    Mantenha a resposta concisa e prática, adaptando a linguagem técnica ao perfil do usuário e responda somente sobre os assuntos pertinentes de sua função que é auxiliar os clientes para temas de tecnologia e cibersegurança qualquer assunto fora do contexto você deve responder que só pode auxiliar com base no seu escopo.`;
+    Mantenha a resposta concisa e prática, adaptando a linguagem técnica ao perfil do usuário.`;
 
     const geminiPrompt = `Como especialista em TI e segurança da Macartech, analise este cenário: ${description}
     Forneça:

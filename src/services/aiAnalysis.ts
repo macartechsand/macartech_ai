@@ -1,6 +1,5 @@
 import { SecurityIncident, AIAnalysisResult, SeverityLevel } from '../types';
 import OpenAI from 'openai';
-"""import { GoogleGenerativeAI } from '@google/generative-ai';"""
 import {GoogleGenAI} from '@google/genai';
 
 const openai = new OpenAI({

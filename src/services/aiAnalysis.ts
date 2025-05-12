@@ -1,6 +1,6 @@
 import { SecurityIncident, AIAnalysisResult, SeverityLevel } from '../types';
 import OpenAI from 'openai';
-import {GoogleGenAI} from '@google/genai';
+import GoogleGenAI from '@google/genai';
 
 const openai = new OpenAI({
   apiKey: import.meta.env.VITE_OPENAI_API_KEY,

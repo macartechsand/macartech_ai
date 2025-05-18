@@ -5,6 +5,10 @@ import Footer from './components/Footer';
 import Services from './pages/Services';
 import Contact from './pages/Contact';
 import Home from './pages/Home';
+import Privacy from './pages/Privacy';
+import Terms from './pages/Terms';
+import LGPD from './pages/LGPD';
+import Cookies from './pages/Cookies';
 import { LanguageProvider } from './contexts/LanguageContext';
 
 const App: React.FC = () => {
@@ -31,6 +35,10 @@ const App: React.FC = () => {
             <Route path="/" element={<Home />} />
             <Route path="/services" element={<Services />} />
             <Route path="/contact" element={<Contact />} />
+            <Route path="/privacy" element={<Privacy />} />
+            <Route path="/terms" element={<Terms />} />
+            <Route path="/lgpd" element={<LGPD />} />
+            <Route path="/cookies" element={<Cookies />} />
           </Routes>
           <Footer />
         </div>

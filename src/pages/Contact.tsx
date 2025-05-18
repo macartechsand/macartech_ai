@@ -5,26 +5,26 @@ const Contact = () => {
   const contactInfo = [
     {
       icon: <Phone className="w-6 h-6 text-blue-600" />,
-      title: "Telefone",
+      title: "Phone",
       content: "+55 (11) 977288509",
       link: "tel:+55977288509"
     },
     {
       icon: <Mail className="w-6 h-6 text-blue-600" />,
-      title: "E-mail",
+      title: "Email",
       content: "macartesand@gmail.com",
       link: "mailto:macartesand@gmail.com"
     },
     {
       icon: <MapPin className="w-6 h-6 text-blue-600" />,
-      title: "Endereço",
-      content: "São Paulo, SP - Brasil",
+      title: "Address",
+      content: "São Paulo, SP - Brazil",
       link: "https://maps.google.com/?q=São Paulo, SP"
     },
     {
       icon: <Clock className="w-6 h-6 text-blue-600" />,
-      title: "Horário",
-      content: "Seg-Sex: 8h às 18h",
+      title: "Hours",
+      content: "Mon-Fri: 8am to 6pm",
       link: null
     }
   ];
@@ -34,73 +34,18 @@ const Contact = () => {
       <div className="container mx-auto px-4 py-16">
         <div className="text-center mb-16">
           <h1 className="text-4xl font-bold text-slate-900 dark:text-white mb-4">
-            Entre em Contato
+            Contact Us
           </h1>
           <p className="text-lg text-slate-600 dark:text-slate-400 max-w-2xl mx-auto">
-            Estamos prontos para ajudar com suas necessidades em tecnologia e segurança digital
+            We're ready to help with your technology and digital security needs
           </p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-12 max-w-6xl mx-auto">
-          <div className="bg-white dark:bg-slate-800 rounded-xl shadow-lg p-8">
-            <h2 className="text-2xl font-bold text-slate-900 dark:text-white mb-6">
-              Envie sua Mensagem
-            </h2>
-            <form className="space-y-6">
-              <div>
-                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
-                  Nome
-                </label>
-                <input
-                  type="text"
-                  className="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-slate-700 dark:text-white"
-                  required
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
-                  E-mail
-                </label>
-                <input
-                  type="email"
-                  className="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-slate-700 dark:text-white"
-                  required
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
-                  Assunto
-                </label>
-                <input
-                  type="text"
-                  className="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-slate-700 dark:text-white"
-                  required
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
-                  Mensagem
-                </label>
-                <textarea
-                  rows={4}
-                  className="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-slate-700 dark:text-white resize-none"
-                  required
-                />
-              </div>
-              <button
-                type="submit"
-                className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2.5 px-4 rounded-lg transition-colors duration-200 flex items-center justify-center space-x-2"
-              >
-                <MessageSquare className="w-5 h-5" />
-                <span>Enviar Mensagem</span>
-              </button>
-            </form>
-          </div>
-
           <div>
             <div className="bg-white dark:bg-slate-800 rounded-xl shadow-lg p-8 mb-8">
               <h2 className="text-2xl font-bold text-slate-900 dark:text-white mb-6">
-                Informações de Contato
+                Contact Information
               </h2>
               <div className="space-y-6">
                 {contactInfo.map((info, index) => (
@@ -132,10 +77,10 @@ const Contact = () => {
 
             <div className="bg-white dark:bg-slate-800 rounded-xl shadow-lg p-8">
               <h2 className="text-2xl font-bold text-slate-900 dark:text-white mb-6">
-                Atendimento Rápido
+                Quick Support
               </h2>
               <p className="text-slate-600 dark:text-slate-400 mb-6">
-                Precisa de ajuda imediata? Entre em contato pelo WhatsApp para um atendimento mais rápido.
+                Need immediate help? Contact us via WhatsApp for faster support.
               </p>
               <a
                 href="https://wa.me/5511977288509"
@@ -143,7 +88,7 @@ const Contact = () => {
                 rel="noopener noreferrer"
                 className="block w-full bg-green-600 hover:bg-green-700 text-white font-medium py-2.5 px-4 rounded-lg text-center transition-colors duration-200"
               >
-                Falar no WhatsApp
+                Chat on WhatsApp
               </a>
             </div>
           </div>

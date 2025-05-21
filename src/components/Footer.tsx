@@ -19,15 +19,6 @@ const Footer: React.FC = () => {
             </p>
             <div className="flex space-x-4">
               <a 
-                href="https://facebook.com/macartech" 
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-slate-500 hover:text-blue-600 dark:text-slate-400 dark:hover:text-blue-400 transition-colors"
-                aria-label="Facebook"
-              >
-                <Facebook className="h-5 w-5" />
-              </a>
-              <a 
                 href="https://instagram.com/_macartech" 
                 target="_blank"
                 rel="noopener noreferrer"

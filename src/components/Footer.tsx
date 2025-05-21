@@ -15,7 +15,7 @@ const Footer: React.FC = () => {
               <span className="text-lg font-bold text-slate-800 dark:text-white">Macartech</span>
             </div>
             <p className="text-slate-600 dark:text-slate-400 mb-4">
-              Soluções em tecnologia e segurança digital para empresas e pessoas físicas.
+              Technology and digital security solutions for businesses and individuals.
             </p>
             <div className="flex space-x-4">
               <a 
@@ -49,14 +49,14 @@ const Footer: React.FC = () => {
           </div>
           
           <div>
-            <h3 className="text-slate-800 dark:text-white font-semibold mb-4">Serviços</h3>
+            <h3 className="text-slate-800 dark:text-white font-semibold mb-4">Services</h3>
             <ul className="space-y-2">
               <li>
                 <Link 
                   to="/services#support"
                   className="text-slate-600 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
                 >
-                  Suporte Técnico
+                  Technical Support
                 </Link>
               </li>
               <li>
@@ -64,7 +64,7 @@ const Footer: React.FC = () => {
                   to="/services#consulting"
                   className="text-slate-600 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
                 >
-                  Consultoria em TI
+                  IT Consulting
                 </Link>
               </li>
               <li>
@@ -72,7 +72,7 @@ const Footer: React.FC = () => {
                   to="/services#security"
                   className="text-slate-600 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
                 >
-                  Segurança Digital
+                  Digital Security
                 </Link>
               </li>
               <li>
@@ -80,21 +80,21 @@ const Footer: React.FC = () => {
                   to="/services#development"
                   className="text-slate-600 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
                 >
-                  Desenvolvimento
+                  Development
                 </Link>
               </li>
             </ul>
           </div>
           
           <div>
-            <h3 className="text-slate-800 dark:text-white font-semibold mb-4">Empresa</h3>
+            <h3 className="text-slate-800 dark:text-white font-semibold mb-4">Company</h3>
             <ul className="space-y-2">
               <li>
                 <Link 
                   to="/about"
                   className="text-slate-600 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
                 >
-                  Sobre Nós
+                  About Us
                 </Link>
               </li>
               <li>
@@ -110,7 +110,7 @@ const Footer: React.FC = () => {
                   to="/careers"
                   className="text-slate-600 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
                 >
-                  Carreiras
+                  Careers
                 </Link>
               </li>
               <li>
@@ -118,7 +118,7 @@ const Footer: React.FC = () => {
                   to="/contact"
                   className="text-slate-600 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
                 >
-                  Contato
+                  Contact
                 </Link>
               </li>
             </ul>
@@ -132,7 +132,7 @@ const Footer: React.FC = () => {
                   to="/privacy"
                   className="text-slate-600 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
                 >
-                  Política de Privacidade
+                  Privacy Policy
                 </Link>
               </li>
               <li>
@@ -140,7 +140,7 @@ const Footer: React.FC = () => {
                   to="/terms"
                   className="text-slate-600 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
                 >
-                  Termos de Uso
+                  Terms of Use
                 </Link>
               </li>
               <li>
@@ -148,7 +148,7 @@ const Footer: React.FC = () => {
                   to="/cookies"
                   className="text-slate-600 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
                 >
-                  Política de Cookies
+                  Cookie Policy
                 </Link>
               </li>
               <li>
@@ -156,7 +156,7 @@ const Footer: React.FC = () => {
                   to="/lgpd"
                   className="text-slate-600 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
                 >
-                  LGPD
+                  LGPD (Data Protection Law)
                 </Link>
               </li>
             </ul>
@@ -165,7 +165,7 @@ const Footer: React.FC = () => {
         
         <div className="pt-8 border-t border-slate-200 dark:border-slate-800 text-center">
           <p className="text-slate-600 dark:text-slate-400 text-sm">
-            © {currentYear} Macartech. Todos os direitos reservados.
+            © {currentYear} Macartech. All rights reserved.
           </p>
         </div>
       </div>

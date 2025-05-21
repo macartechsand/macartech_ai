@@ -6,7 +6,6 @@ interface IncidentFormProps {
   onSubmit: (incident: SecurityIncident) => void;
 }
 
-
 const IncidentForm: React.FC<IncidentFormProps> = ({ onSubmit }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [step, setStep] = useState(1);
@@ -45,14 +44,14 @@ const IncidentForm: React.FC<IncidentFormProps> = ({ onSubmit }) => {
       <div className="p-6 sm:p-8">
         <div className="flex items-center space-x-3 mb-6">
           <Shield className="w-8 h-8 text-blue-700 dark:text-blue-400" />
-          <h2 className="text-xl font-bold text-slate-800 dark:text-white">Assistente Virtual Macartech</h2>
+          <h2 className="text-xl font-bold text-slate-800 dark:text-white">Macartech Virtual Assistant</h2>
         </div>
         
         <form onSubmit={handleSubmit} className="space-y-6">
           {step === 1 && (
             <div className="space-y-6 animate-fadeIn">
               <h3 className="text-lg font-semibold text-slate-800 dark:text-white">
-                Você deseja atendimento como Pessoa Física ou como Empresa?
+                Are you requesting support as an Individual or as a Company?
               </h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {Object.values(ClientType).map((type) => (
@@ -68,8 +67,8 @@ const IncidentForm: React.FC<IncidentFormProps> = ({ onSubmit }) => {
                     <span className="block font-medium text-slate-800 dark:text-white mb-2">{type}</span>
                     <span className="text-sm text-slate-600 dark:text-slate-400">
                       {type === ClientType.INDIVIDUAL 
-                        ? "Atendimento personalizado para suas necessidades individuais"
-                        : "Soluções corporativas para proteger seu negócio"
+                        ? "Personalized support for your individual needs"
+                        : "Corporate solutions to protect your business"
                       }
                     </span>
                   </button>
@@ -81,7 +80,7 @@ const IncidentForm: React.FC<IncidentFormProps> = ({ onSubmit }) => {
           {step === 2 && (
             <div className="space-y-6 animate-fadeIn">
               <h3 className="text-lg font-semibold text-slate-800 dark:text-white">
-                Qual o tipo de atendimento você precisa?
+                What type of service do you need?
               </h3>
               <div className="grid grid-cols-1 gap-4">
                 {Object.values(ServiceType).map((type) => (
@@ -97,10 +96,10 @@ const IncidentForm: React.FC<IncidentFormProps> = ({ onSubmit }) => {
                     <span className="block font-medium text-slate-800 dark:text-white mb-2">{type}</span>
                     <span className="text-sm text-slate-600 dark:text-slate-400">
                       {type === ServiceType.SUPPORT 
-                        ? "Ajuda com problemas técnicos ou incidentes de segurança"
+                        ? "Help with technical issues or security incidents"
                         : type === ServiceType.SOLUTIONS
-                        ? "Desenvolvimento de soluções personalizadas para suas necessidades"
-                        : "Análise completa da segurança do seu ambiente digital"
+                        ? "Custom solutions tailored to your needs"
+                        : "Comprehensive analysis of your digital environment"
                       }
                     </span>
                   </button>
@@ -114,10 +113,10 @@ const IncidentForm: React.FC<IncidentFormProps> = ({ onSubmit }) => {
               <div>
                 <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
                   {incident.serviceType === ServiceType.SUPPORT 
-                    ? "Descreva o problema ou incidente"
+                    ? "Describe the issue or incident"
                     : incident.serviceType === ServiceType.SOLUTIONS
-                    ? "Descreva sua necessidade ou desafio"
-                    : "Conte-nos sobre seu ambiente digital"
+                    ? "Describe your need or challenge"
+                    : "Tell us about your digital environment"
                   }
                 </label>
                 <textarea
@@ -125,7 +124,7 @@ const IncidentForm: React.FC<IncidentFormProps> = ({ onSubmit }) => {
                   value={incident.description}
                   onChange={handleChange}
                   rows={4}
-                  placeholder="Por favor, forneça detalhes para melhor atendimento..."
+                  placeholder="Please provide details to assist us better..."
                   className="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-slate-700 dark:text-white transition-all duration-200 resize-none"
                   required
                 />
@@ -133,7 +132,7 @@ const IncidentForm: React.FC<IncidentFormProps> = ({ onSubmit }) => {
 
               <div>
                 <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
-                  Método de Contato Preferido
+                  Preferred Contact Method
                 </label>
                 <div className="flex space-x-4">
                   {Object.values(ContactMethod).map((method) => (
@@ -154,14 +153,14 @@ const IncidentForm: React.FC<IncidentFormProps> = ({ onSubmit }) => {
 
               <div>
                 <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
-                  {incident.contactMethod === ContactMethod.WHATSAPP ? "Número do WhatsApp" : "Usuário do Telegram"}
+                  {incident.contactMethod === ContactMethod.WHATSAPP ? "WhatsApp Number" : "Telegram Username"}
                 </label>
                 <input
                   type="text"
                   name="contactDetails"
                   value={incident.contactDetails}
                   onChange={handleChange}
-                  placeholder={incident.contactMethod === ContactMethod.WHATSAPP ? "Ex: 5593984668494" : "@seu_usuario"}
+                  placeholder={incident.contactMethod === ContactMethod.WHATSAPP ? "e.g., 5593984668494" : "@your_username"}
                   className="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-slate-700 dark:text-white transition-all duration-200"
                   required
                 />
@@ -180,12 +179,12 @@ const IncidentForm: React.FC<IncidentFormProps> = ({ onSubmit }) => {
                   {isSubmitting ? (
                     <>
                       <LoaderCircle className="w-5 h-5 animate-spin" />
-                      <span>Processando...</span>
+                      <span>Processing...</span>
                     </>
                   ) : (
                     <>
                       <Send className="w-5 h-5" />
-                      <span>Enviar</span>
+                      <span>Submit</span>
                     </>
                   )}
                 </button>

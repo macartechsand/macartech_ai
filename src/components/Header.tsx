@@ -50,7 +50,7 @@ const Header: React.FC<HeaderProps> = ({ toggleDarkMode, isDarkMode }) => {
               location.pathname === '/services' ? 'text-blue-600 dark:text-blue-400' : ''
             }`}
           >
-            Serviços
+            Services
           </Link>
           <Link 
             to="/contact"
@@ -58,7 +58,7 @@ const Header: React.FC<HeaderProps> = ({ toggleDarkMode, isDarkMode }) => {
               location.pathname === '/contact' ? 'text-blue-600 dark:text-blue-400' : ''
             }`}
           >
-            Contato
+            Contact
           </Link>
           <button
             onClick={toggleDarkMode}

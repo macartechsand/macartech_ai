@@ -104,7 +104,7 @@ const Header: React.FC<HeaderProps> = ({ toggleDarkMode, isDarkMode }) => {
               <Link 
                 to="/home"
                 className={`text-slate-700 dark:text-slate-200 hover:text-blue-600 dark:hover:text-blue-400 transition-colors py-2 ${
-                  location.pathname === '/' ? 'text-blue-600 dark:text-blue-400' : ''
+                  location.pathname === '/home' ? 'text-blue-600 dark:text-blue-400' : ''
                 }`}
                 onClick={() => setIsMobileMenuOpen(false)}
               >

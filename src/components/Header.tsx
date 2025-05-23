@@ -102,7 +102,7 @@ const Header: React.FC<HeaderProps> = ({ toggleDarkMode, isDarkMode }) => {
           <div className="absolute top-full left-0 right-0 bg-white dark:bg-slate-900 shadow-md py-4 md:hidden animate-fadeIn">
             <nav className="container mx-auto px-4 flex flex-col space-y-4">
               <Link 
-                to="/"
+                to="/home"
                 className={`text-slate-700 dark:text-slate-200 hover:text-blue-600 dark:hover:text-blue-400 transition-colors py-2 ${
                   location.pathname === '/' ? 'text-blue-600 dark:text-blue-400' : ''
                 }`}

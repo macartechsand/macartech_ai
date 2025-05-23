@@ -23,24 +23,7 @@ const Privacy = () => {
         }
       ]
     },
-    pt: {
-      title: "Política de Privacidade",
-      lastUpdated: "Última atualização: Março 2024",
-      sections: [
-        {
-          title: "Coleta de Informações",
-          text: "Coletamos informações que você fornece diretamente, incluindo nome, email e detalhes de contato ao usar nossos serviços."
-        },
-        {
-          title: "Uso dos Dados",
-          text: "Usamos as informações coletadas para fornecer e melhorar nossos serviços, comunicar com você e garantir segurança."
-        },
-        {
-          title: "Proteção de Dados",
-          text: "Implementamos medidas de segurança apropriadas para proteger suas informações pessoais contra acesso ou divulgação não autorizada."
-        }
-      ]
-    }
+    
   };
 
   const currentContent = content[language as keyof typeof content] || content.en;

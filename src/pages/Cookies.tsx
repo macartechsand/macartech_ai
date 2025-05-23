@@ -24,8 +24,6 @@ const Cookies = () => {
       ]
     },
     
-      ]
-    }
   };
 
   const currentContent = content[language as keyof typeof content] || content.en;

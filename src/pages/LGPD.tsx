@@ -23,24 +23,7 @@ const LGPD = () => {
         }
       ]
     },
-    pt: {
-      title: "Conformidade com a LGPD",
-      lastUpdated: "Última atualização: Março 2024",
-      sections: [
-        {
-          title: "Seus Direitos",
-          text: "Sob a LGPD, você tem direito de acessar, corrigir, excluir e transferir seus dados pessoais. Também pode revogar o consentimento a qualquer momento."
-        },
-        {
-          title: "Processamento de Dados",
-          text: "Processamos dados pessoais apenas com base legal e finalidades específicas, garantindo transparência e segurança em todas as operações."
-        },
-        {
-          title: "Transferências Internacionais",
-          text: "Quaisquer transferências internacionais de dados cumprem os requisitos da LGPD e mantêm medidas de segurança apropriadas."
-        }
-      ]
-    }
+    
   };
 
   const currentContent = content[language as keyof typeof content] || content.en;

@@ -23,22 +23,7 @@ const Cookies = () => {
         }
       ]
     },
-    pt: {
-      title: "Política de Cookies",
-      lastUpdated: "Última atualização: Março 2024",
-      sections: [
-        {
-          title: "O que são Cookies",
-          text: "Cookies são pequenos arquivos de texto armazenados em seu dispositivo que nos ajudam a fornecer e melhorar nossos serviços."
-        },
-        {
-          title: "Como Usamos os Cookies",
-          text: "Usamos cookies para funções essenciais, análises e para melhorar a experiência do usuário. Você pode controlar as configurações de cookies em seu navegador."
-        },
-        {
-          title: "Tipos de Cookies",
-          text: "Utilizamos cookies necessários para operação do site e cookies opcionais para análises e personalização."
-        }
+    
       ]
     }
   };

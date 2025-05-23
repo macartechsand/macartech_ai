@@ -23,24 +23,7 @@ const Terms = () => {
         }
       ]
     },
-    pt: {
-      title: "Termos de Uso",
-      lastUpdated: "Última atualização: Março 2024",
-      sections: [
-        {
-          title: "Uso do Serviço",
-          text: "Ao acessar nossos serviços, você concorda com estes termos e condições. Reservamos o direito de modificar ou encerrar serviços a qualquer momento."
-        },
-        {
-          title: "Responsabilidades do Usuário",
-          text: "Os usuários devem fornecer informações precisas e manter a segurança de suas contas. Qualquer uso não autorizado deve ser relatado imediatamente."
-        },
-        {
-          title: "Limitações",
-          text: "Não nos responsabilizamos por danos decorrentes do uso ou interrupção do serviço. Os usuários aceitam todos os riscos associados ao uso do serviço."
-        }
-      ]
-    }
+    
   };
 
   const currentContent = content[language as keyof typeof content] || content.en;

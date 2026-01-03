@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { IncidentType, SeverityLevel, IncidentStatus, ContactMethod, SecurityIncident, ClientType, ServiceType } from '../types';
 import { Shield, AlertTriangle, CheckCircle, Send, CircleUser as LoaderCircle } from 'lucide-react';
-import { sanitizeInput, validateInput } from '../utils/security';
 
 interface IncidentFormProps {
   onSubmit: (incident: SecurityIncident) => void;
@@ -23,10 +22,7 @@ const IncidentForm: React.FC<IncidentFormProps> = ({ onSubmit }) => {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
-    
-    // Sanitize input before setting state
-    const sanitizedValue = sanitizeInput(value);
-    setIncident(prev => ({ ...prev, [name]: sanitizedValue }));
+    setIncident(prev => ({ ...prev, [name]: value }));
   };
 
   const handleNext = () => {
@@ -35,26 +31,6 @@ const IncidentForm: React.FC<IncidentFormProps> = ({ onSubmit }) => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
-    // Additional validation before submission
-    if (!incident.description.trim()) {
-      alert('Please provide a description of your issue.');
-      return;
-    }
-    
-    if (incident.description.length > 2000) {
-      alert('Description must be less than 2000 characters.');
-      return;
-    }
-    
-    // Validate contact details format
-    if (incident.contactDetails && incident.contactMethod === ContactMethod.WHATSAPP) {
-      if (!validateInput(incident.contactDetails.replace(/\D/g, ''), 'phone')) {
-        alert('Please enter a valid phone number.');
-        return;
-      }
-    }
-    
     setIsSubmitting(true);
     
     setTimeout(() => {
@@ -150,7 +126,6 @@ const IncidentForm: React.FC<IncidentFormProps> = ({ onSubmit }) => {
                   value={incident.description}
                   onChange={handleChange}
                   rows={4}
-                  maxLength={2000}
                   placeholder="Please provide details to assist us better..."
                   className="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-slate-700 dark:text-white transition-all duration-200 resize-none"
                   required
@@ -187,7 +162,6 @@ const IncidentForm: React.FC<IncidentFormProps> = ({ onSubmit }) => {
                   name="contactDetails"
                   value={incident.contactDetails}
                   onChange={handleChange}
-                  maxLength={50}
                   placeholder={incident.contactMethod === ContactMethod.WHATSAPP ? "e.g., 5593984668494" : "@your_username"}
                   className="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-slate-700 dark:text-white transition-all duration-200"
                   required

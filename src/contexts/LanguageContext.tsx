@@ -34,10 +34,9 @@ export const translations = {
     'client.business': 'Business',
 
     // Service Types
-    'service.support': 'Technical Support',
-    'service.incident': 'Security Incident',
-    'service.tips': 'Security Tips & Best Practices',
-    'service.learning': 'Security Learning & Deep Search',
+    'service.support': 'Support / Incident',
+    'service.solutions': 'Custom Solutions',
+    'service.assessment': 'Security Assessment',
 
     // Analysis
     'analysis.title': 'AI-Powered Security Analysis',
@@ -80,10 +79,9 @@ export const translations = {
     'client.business': 'Empresa',
 
     // Service Types
-    'service.support': 'Suporte Técnico',
-    'service.incident': 'Incidente de Segurança',
-    'service.tips': 'Dicas e Melhores Práticas',
-    'service.learning': 'Aprendizado e Pesquisa Avançada',
+    'service.support': 'Suporte / Incidente',
+    'service.solutions': 'Soluções Personalizadas',
+    'service.assessment': 'Avaliação de Segurança',
 
     // Analysis
     'analysis.title': 'Análise de Segurança com IA',

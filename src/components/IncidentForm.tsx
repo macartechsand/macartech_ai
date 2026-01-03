@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { IncidentType, SeverityLevel, IncidentStatus, ContactMethod, SecurityIncident, ClientType, ServiceType } from '../types';
-import { Shield, AlertTriangle, CheckCircle, Send, CircleUser as LoaderCircle } from 'lucide-react';
+import { Shield, AlertTriangle, CheckCircle, Send, UserCircle as LoaderCircle } from 'lucide-react';
 
 interface IncidentFormProps {
   onSubmit: (incident: SecurityIncident) => void;
@@ -96,12 +96,10 @@ const IncidentForm: React.FC<IncidentFormProps> = ({ onSubmit }) => {
                     <span className="block font-medium text-slate-800 dark:text-white mb-2">{type}</span>
                     <span className="text-sm text-slate-600 dark:text-slate-400">
                       {type === ServiceType.SUPPORT 
-                        ? "Get help with technical problems and system issues"
-                        : type === ServiceType.INCIDENT
-                        ? "Report and get assistance with security incidents"
-                        : type === ServiceType.TIPS
-                        ? "Learn security best practices and prevention tips"
-                        : "Deep dive into security topics and advanced learning"
+                        ? "Help with technical issues or security incidents"
+                        : type === ServiceType.SOLUTIONS
+                        ? "Custom solutions tailored to your needs"
+                        : "Comprehensive analysis of your digital environment"
                       }
                     </span>
                   </button>

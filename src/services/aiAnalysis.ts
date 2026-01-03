@@ -12,60 +12,22 @@ const genAI = new GoogleGenerativeAI(import.meta.env.VITE_GEMINI_API_KEY);
 export const analyzeSecurityIncident = async (incident: SecurityIncident): Promise<AIAnalysisResult> => {
   try {
     const description = incident.description;
-    const serviceType = incident.serviceType;
 
-    let openAIPrompt = '';
-    let geminiPrompt = '';
+    const openAIPrompt = `You are a Technology and Cybersecurity expert at Macartech. Only respond about topics relevant to your function, which is to assist clients with technology and cybersecurity themes. For any topic outside this context, you should respond that you can only assist based on your scope. Analyze the following problem: ${description}.
+    Provide an objective response with:
+    1. Initial diagnosis of the problem
+    2. Possible causes and associated risks
+    3. Immediate technical recommendations
+    4. Suggested next steps
+    Keep the response concise and practical, adapting technical language to the user's profile.`;
 
-    if (serviceType === 'Security Tips & Best Practices') {
-      openAIPrompt = `You are a cybersecurity educator at Macartech. The user wants to learn about: ${description}. 
-      Provide educational content with:
-      1. Clear explanation of the topic
-      2. Best practices and recommendations
-      3. Common mistakes to avoid
-      4. Practical implementation tips
-      Keep it educational and accessible for general users.`;
-      
-      geminiPrompt = `As a security educator, explain this topic: ${description}
-      Include:
-      1. Why this topic is important for security
-      2. Step-by-step best practices
-      3. Real-world examples
-      4. Prevention strategies
-      Make it practical and easy to understand.`;
-    } else if (serviceType === 'Security Learning & Deep Search') {
-      openAIPrompt = `You are a cybersecurity expert providing advanced learning content about: ${description}.
-      Provide comprehensive information with:
-      1. Technical deep dive into the topic
-      2. Advanced security concepts
-      3. Industry standards and frameworks
-      4. Further learning resources
-      Adapt the technical level for someone wanting to learn deeply.`;
-      
-      geminiPrompt = `Provide advanced cybersecurity education on: ${description}
-      Include:
-      1. Technical details and mechanisms
-      2. Advanced protection strategies
-      3. Industry best practices
-      4. Emerging trends and threats
-      Focus on comprehensive learning and understanding.`;
-    } else {
-      openAIPrompt = `You are a Technology and Cybersecurity expert at Macartech. Only respond about topics relevant to your function, which is to assist clients with technology and cybersecurity themes. For any topic outside this context, you should respond that you can only assist based on your scope. Analyze the following problem: ${description}.
-      Provide an objective response with:
-      1. Initial diagnosis of the problem
-      2. Possible causes and associated risks
-      3. Immediate technical recommendations
-      4. Suggested next steps
-      Keep the response concise and practical, adapting technical language to the user's profile.`;
-
-      geminiPrompt = `As an IT and security expert at Macartech, analyze this scenario: ${description}
-      Provide:
-      1. Quick problem assessment
-      2. Practical and objective recommendations
-      3. Suggested protection measures
-      4. Future prevention guidelines
-      Prioritize clarity and objectivity, focusing on practical solutions.`;
-    }
+    const geminiPrompt = `As an IT and security expert at Macartech, analyze this scenario: ${description}
+    Provide:
+    1. Quick problem assessment
+    2. Practical and objective recommendations
+    3. Suggested protection measures
+    4. Future prevention guidelines
+    Prioritize clarity and objectivity, focusing on practical solutions.`;
 
     let openAIResponse = '';
     let geminiResponse = '';

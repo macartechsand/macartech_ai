@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { IncidentType, SeverityLevel, IncidentStatus, ContactMethod, SecurityIncident, ClientType, ServiceType } from '../types';
-import { Shield, AlertTriangle, CheckCircle, Send, UserCircle as LoaderCircle } from 'lucide-react';
+import { Shield, AlertTriangle, CheckCircle, Send, CircleUser as LoaderCircle } from 'lucide-react';
 
 interface IncidentFormProps {
   onSubmit: (incident: SecurityIncident) => void;
@@ -115,12 +115,10 @@ const IncidentForm: React.FC<IncidentFormProps> = ({ onSubmit }) => {
               <div>
                 <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
                   {incident.serviceType === ServiceType.SUPPORT 
-                    ? "Describe your technical issue"
-                    : incident.serviceType === ServiceType.INCIDENT
-                    ? "Describe the security incident"
-                    : incident.serviceType === ServiceType.TIPS
-                    ? "What security topic would you like to learn about?"
-                    : "What security topic do you want to explore in depth?"
+                    ? "Describe the issue or incident"
+                    : incident.serviceType === ServiceType.SOLUTIONS
+                    ? "Describe your need or challenge"
+                    : "Tell us about your digital environment"
                   }
                 </label>
                 <textarea
@@ -128,10 +126,7 @@ const IncidentForm: React.FC<IncidentFormProps> = ({ onSubmit }) => {
                   value={incident.description}
                   onChange={handleChange}
                   rows={4}
-                  placeholder={incident.serviceType === ServiceType.TIPS || incident.serviceType === ServiceType.LEARNING 
-                    ? "e.g., password security, phishing protection, network security..."
-                    : "Please provide details to assist you better..."
-                  }
+                  placeholder="Please provide details to assist us better..."
                   className="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-slate-700 dark:text-white transition-all duration-200 resize-none"
                   required
                 />

@@ -17,9 +17,10 @@ export enum ClientType {
 }
 
 export enum ServiceType {
-  SUPPORT = "Support / Incident",
-  SOLUTIONS = "Custom Solutions",
-  ASSESSMENT = "Security Assessment"
+  SUPPORT = "Technical Support",
+  INCIDENT = "Security Incident",
+  TIPS = "Security Tips & Best Practices",
+  LEARNING = "Security Learning & Deep Search"
 }
 
 export enum IncidentType {

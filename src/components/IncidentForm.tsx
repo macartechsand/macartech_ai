@@ -96,10 +96,12 @@ const IncidentForm: React.FC<IncidentFormProps> = ({ onSubmit }) => {
                     <span className="block font-medium text-slate-800 dark:text-white mb-2">{type}</span>
                     <span className="text-sm text-slate-600 dark:text-slate-400">
                       {type === ServiceType.SUPPORT 
-                        ? "Help with technical issues or security incidents"
-                        : type === ServiceType.SOLUTIONS
-                        ? "Custom solutions tailored to your needs"
-                        : "Comprehensive analysis of your digital environment"
+                        ? "Get help with technical problems and system issues"
+                        : type === ServiceType.INCIDENT
+                        ? "Report and get assistance with security incidents"
+                        : type === ServiceType.TIPS
+                        ? "Learn security best practices and prevention tips"
+                        : "Deep dive into security topics and advanced learning"
                       }
                     </span>
                   </button>
@@ -113,10 +115,12 @@ const IncidentForm: React.FC<IncidentFormProps> = ({ onSubmit }) => {
               <div>
                 <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
                   {incident.serviceType === ServiceType.SUPPORT 
-                    ? "Describe the issue or incident"
-                    : incident.serviceType === ServiceType.SOLUTIONS
-                    ? "Describe your need or challenge"
-                    : "Tell us about your digital environment"
+                    ? "Describe your technical issue"
+                    : incident.serviceType === ServiceType.INCIDENT
+                    ? "Describe the security incident"
+                    : incident.serviceType === ServiceType.TIPS
+                    ? "What security topic would you like to learn about?"
+                    : "What security topic do you want to explore in depth?"
                   }
                 </label>
                 <textarea
@@ -124,7 +128,10 @@ const IncidentForm: React.FC<IncidentFormProps> = ({ onSubmit }) => {
                   value={incident.description}
                   onChange={handleChange}
                   rows={4}
-                  placeholder="Please provide details to assist us better..."
+                  placeholder={incident.serviceType === ServiceType.TIPS || incident.serviceType === ServiceType.LEARNING 
+                    ? "e.g., password security, phishing protection, network security..."
+                    : "Please provide details to assist you better..."
+                  }
                   className="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-slate-700 dark:text-white transition-all duration-200 resize-none"
                   required
                 />

@@ -51,24 +51,24 @@ const IncidentForm: React.FC<IncidentFormProps> = ({ onSubmit }) => {
           {step === 1 && (
             <div className="space-y-6 animate-fadeIn">
               <h3 className="text-lg font-semibold text-slate-800 dark:text-white">
-                Are you requesting support as an Individual or as a Company?
+                What type of help do you need?
               </h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {Object.values(ClientType).map((type) => (
+              <div className="grid grid-cols-1 gap-4">
+                {Object.values(ServiceType).map((type) => (
                   <button
                     key={type}
                     type="button"
                     onClick={() => {
-                      setIncident(prev => ({ ...prev, clientType: type }));
+                      setIncident(prev => ({ ...prev, serviceType: type, clientType: ClientType.INDIVIDUAL }));
                       handleNext();
                     }}
                     className="p-4 border-2 rounded-lg text-left hover:border-blue-500 transition-all duration-200"
                   >
                     <span className="block font-medium text-slate-800 dark:text-white mb-2">{type}</span>
                     <span className="text-sm text-slate-600 dark:text-slate-400">
-                      {type === ClientType.INDIVIDUAL 
-                        ? "Personalized support for your individual needs"
-                        : "Corporate solutions to protect your business"
+                      {type === ServiceType.SUPPORT 
+                        ? "Get help with technical problems and system issues"
+                        : "Report security incidents and get immediate assistance"
                       }
                     </span>
                   </button>
@@ -79,44 +79,11 @@ const IncidentForm: React.FC<IncidentFormProps> = ({ onSubmit }) => {
 
           {step === 2 && (
             <div className="space-y-6 animate-fadeIn">
-              <h3 className="text-lg font-semibold text-slate-800 dark:text-white">
-                What type of service do you need?
-              </h3>
-              <div className="grid grid-cols-1 gap-4">
-                {Object.values(ServiceType).map((type) => (
-                  <button
-                    key={type}
-                    type="button"
-                    onClick={() => {
-                      setIncident(prev => ({ ...prev, serviceType: type }));
-                      handleNext();
-                    }}
-                    className="p-4 border-2 rounded-lg text-left hover:border-blue-500 transition-all duration-200"
-                  >
-                    <span className="block font-medium text-slate-800 dark:text-white mb-2">{type}</span>
-                    <span className="text-sm text-slate-600 dark:text-slate-400">
-                      {type === ServiceType.SUPPORT 
-                        ? "Help with technical issues or security incidents"
-                        : type === ServiceType.SOLUTIONS
-                        ? "Custom solutions tailored to your needs"
-                        : "Comprehensive analysis of your digital environment"
-                      }
-                    </span>
-                  </button>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {step === 3 && (
-            <div className="space-y-6 animate-fadeIn">
               <div>
                 <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
                   {incident.serviceType === ServiceType.SUPPORT 
-                    ? "Describe the issue or incident"
-                    : incident.serviceType === ServiceType.SOLUTIONS
-                    ? "Describe your need or challenge"
-                    : "Tell us about your digital environment"
+                    ? "Describe your technical issue"
+                    : "Describe the security incident"
                   }
                 </label>
                 <textarea
@@ -124,7 +91,7 @@ const IncidentForm: React.FC<IncidentFormProps> = ({ onSubmit }) => {
                   value={incident.description}
                   onChange={handleChange}
                   rows={4}
-                  placeholder="Please provide details to assist us better..."
+                  placeholder="Describe your issue in detail..."
                   className="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-slate-700 dark:text-white transition-all duration-200 resize-none"
                   required
                 />

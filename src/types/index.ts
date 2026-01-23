@@ -12,14 +12,12 @@ export type SecurityIncident = {
 };
 
 export enum ClientType {
-  INDIVIDUAL = "Individual",
-  BUSINESS = "Business"
+  INDIVIDUAL = "Individual"
 }
 
 export enum ServiceType {
-  SUPPORT = "Support / Incident",
-  SOLUTIONS = "Custom Solutions",
-  ASSESSMENT = "Security Assessment"
+  SUPPORT = "Technical Support",
+  INCIDENT = "Security Incident"
 }
 
 export enum IncidentType {

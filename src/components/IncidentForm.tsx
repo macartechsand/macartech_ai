@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { IncidentType, SeverityLevel, IncidentStatus, ContactMethod, SecurityIncident, ClientType, ServiceType } from '../types';
-import { Shield, AlertTriangle, CheckCircle, Send, UserCircle as LoaderCircle } from 'lucide-react';
+import { Shield, AlertTriangle, CheckCircle, Send, CircleUser as LoaderCircle } from 'lucide-react';
 
 interface IncidentFormProps {
   onSubmit: (incident: SecurityIncident) => void;

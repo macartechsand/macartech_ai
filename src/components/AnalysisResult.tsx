@@ -36,29 +36,19 @@ ${analysis.recommendations.map((rec, index) => `${index + 1}. ${rec}`).join('\n'
         </div>
         
         <div className="space-y-6">
-          {analysis.aiResponses && (
-            <>
-              <div className="p-4 rounded-lg bg-blue-50 dark:bg-blue-900/30 border border-blue-200 dark:border-blue-800">
-                <div className="flex items-center space-x-2 mb-2">
-                  <Bot className="w-5 h-5 text-blue-700 dark:text-blue-400" />
-                  <h3 className="font-semibold text-slate-800 dark:text-white">LexiSeg </h3>
-                </div>
-                <p className="text-slate-700 dark:text-slate-300 whitespace-pre-line">{analysis.aiResponses.chatgpt}</p>
+          {analysis.aiResponses?.chatgpt && (
+            <div className="p-4 rounded-lg bg-blue-50 dark:bg-blue-900/30 border border-blue-200 dark:border-blue-800">
+              <div className="flex items-center space-x-2 mb-2">
+                <Bot className="w-5 h-5 text-blue-700 dark:text-blue-400" />
+                <h3 className="font-semibold text-slate-800 dark:text-white">AI Analysis</h3>
               </div>
-
-              <div className="p-4 rounded-lg bg-emerald-50 dark:bg-emerald-900/30 border border-emerald-200 dark:border-emerald-800">
-                <div className="flex items-center space-x-2 mb-2">
-                  <Bot className="w-5 h-5 text-emerald-700 dark:text-emerald-400" />
-                  <h3 className="font-semibold text-slate-800 dark:text-white">Gemini sugere:</h3>
-                </div>
-                <p className="text-slate-700 dark:text-slate-300 whitespace-pre-line">{analysis.aiResponses.gemini}</p>
-              </div>
-            </>
+              <p className="text-slate-700 dark:text-slate-300 whitespace-pre-line">{analysis.aiResponses.chatgpt}</p>
+            </div>
           )}
           
           <div className="mb-6">
             <h3 className="text-lg font-semibold text-slate-800 dark:text-white mb-3">
-              <span role="img" aria-label="sparkles">✨</span> Recomendações Consolidadas
+              <span role="img" aria-label="sparkles">✨</span> Recommendations
             </h3>
             <ul className="space-y-2">
               {analysis.recommendations.map((recommendation, index) => (

@@ -12,65 +12,32 @@ const genAI = new GoogleGenerativeAI(import.meta.env.VITE_GEMINI_API_KEY);
 export const analyzeSecurityIncident = async (incident: SecurityIncident): Promise<AIAnalysisResult> => {
   try {
     const description = incident.description;
+    const serviceType = incident.serviceType;
 
-    const openAIPrompt = `You are a Technology and Cybersecurity expert at Macartech. Only respond about topics relevant to your function, which is to assist clients with technology and cybersecurity themes. For any topic outside this context, you should respond that you can only assist based on your scope. Analyze the following problem: ${description}.
-    Provide an objective response with:
-    1. Initial diagnosis of the problem
-    2. Possible causes and associated risks
-    3. Immediate technical recommendations
-    4. Suggested next steps
-    Keep the response concise and practical, adapting technical language to the user's profile.`;
+    const prompt = serviceType === ServiceType.SUPPORT 
+      ? `Help with this technical issue: ${description}. Provide 3 simple solutions.`
+      : `Analyze this security incident: ${description}. Provide immediate steps to take.`;
 
-    const geminiPrompt = `As an IT and security expert at Macartech, analyze this scenario: ${description}
-    Provide:
-    1. Quick problem assessment
-    2. Practical and objective recommendations
-    3. Suggested protection measures
-    4. Future prevention guidelines
-    Prioritize clarity and objectivity, focusing on practical solutions.`;
-
-    let openAIResponse = '';
-    let geminiResponse = '';
-    let usedFallback = false;
-
+    // Use only one AI service to reduce costs
+    let aiResponse = '';
+    
     try {
-      openAIResponse = await getOpenAIAnalysis(openAIPrompt);
-    } catch (openAIError: any) {
-      console.warn('OpenAI analysis failed:', openAIError);
-      if (openAIError?.status !== 429) throw openAIError;
+      aiResponse = await getOpenAIAnalysis(prompt);
+    } catch (error) {
+      console.warn('AI analysis failed:', error);
+      return generateFallbackAnalysis(incident);
     }
-
-    try {
-      geminiResponse = await getGeminiAnalysis(geminiPrompt);
-    } catch (geminiError) {
-      console.warn('Gemini analysis failed:', geminiError);
-    }
-
-    console.log("🧠 OpenAI response:", openAIResponse);
-    console.log("🔮 Gemini response:", geminiResponse);
-
-    if (!openAIResponse.trim() && !geminiResponse.trim()) {
-      usedFallback = true;
-      return {
-        ...generateFallbackAnalysis(incident),
-        errorMessage: "Our analysis services are temporarily unavailable. Please try again later or contact our support."
-      };
-    }
-
-    const combinedAnalysis = combineAIAnalysis(openAIResponse, geminiResponse);
-    const severity = calculateSeverity(combinedAnalysis);
 
     return {
-      summary: combinedAnalysis.summary,
-      recommendations: combinedAnalysis.recommendations,
-      severity,
-      escalationRequired: severity >= SeverityLevel.HIGH,
+      summary: aiResponse.split('\n')[0] || "Analysis completed",
+      recommendations: extractRecommendations(aiResponse),
+      severity: SeverityLevel.MEDIUM,
+      escalationRequired: true,
       contactRecommendation: "A Macartech specialist will contact you to provide personalized assistance.",
       aiResponses: {
-        chatgpt: openAIResponse || "Service temporarily unavailable",
-        gemini: geminiResponse || "Service temporarily unavailable"
-      },
-      usedFallback
+        chatgpt: aiResponse,
+        gemini: ""
+      }
     };
   } catch (error: any) {
     console.error('Error in AI analysis:', error);
@@ -87,7 +54,7 @@ async function getOpenAIAnalysis(prompt: string) {
     messages: [
       {
         role: "system",
-        content: "You are a specialized cybersecurity and technology assistant at Macartech. Your goal is to help users understand digital risks and protection solutions. Use clear and accessible language, adapting the technical level to the context."
+        content: "You are a tech support assistant. Provide clear, simple solutions."
       },
       {
         role: "user",
@@ -95,7 +62,7 @@ async function getOpenAIAnalysis(prompt: string) {
       }
     ],
     temperature: 0.7,
-    max_tokens: 1000
+    max_tokens: 300
   });
 
   const content = completion.choices?.[0]?.message?.content;
@@ -104,50 +71,6 @@ async function getOpenAIAnalysis(prompt: string) {
   }
 
   return content;
-}
-
-async function getGeminiAnalysis(prompt: string) {
-  const model = genAI.generativeModel('gemini-2.0-flash');
-  const result = await model.generateContent(prompt);
-  const response = await result.response;
-
-  if (!response || typeof response.text !== 'function') {
-    throw new Error('Unexpected response format from Gemini');
-  }
-
-  const text = await response.text();
-  if (!text || !text.trim()) {
-    throw new Error('Gemini returned empty response');
-  }
-
-  return text;
-}
-
-function combineAIAnalysis(openAIResponse: string, geminiResponse: string) {
-  const recommendations = new Set<string>();
-
-  extractRecommendations(openAIResponse).forEach(r => recommendations.add(r));
-  extractRecommendations(geminiResponse).forEach(r => recommendations.add(r));
-
-  return {
-    summary: generateEnhancedSummary(openAIResponse, geminiResponse),
-    recommendations: Array.from(recommendations)
-  };
-}
-
-function extractRecommendations(text: string): string[] {
-  return text
-    .split('\n')
-    .map(line => line.trim())
-    .filter(line =>
-      line.length > 0 &&
-      (/^\d+[\.\-)]\s/.test(line) || /^[\-\•]\s/.test(line))
-    );
-}
-
-function generateEnhancedSummary(openAI: string, gemini: string): string {
-  const firstLines = [...openAI.split('\n').slice(0, 2), ...gemini.split('\n').slice(0, 2)];
-  return firstLines.filter(l => l.trim()).join(' ');
 }
 
 function calculateSeverity(analysis: { summary: string; recommendations: string[] }): SeverityLevel {
@@ -166,6 +89,16 @@ function calculateSeverity(analysis: { summary: string; recommendations: string[
   return SeverityLevel.LOW;
 }
 
+function extractRecommendations(text: string): string[] {
+  return text
+    .split('\n')
+    .map(line => line.trim())
+    .filter(line =>
+      line.length > 0 &&
+      (/^\d+[\.\-)]\s/.test(line) || /^[\-\•]\s/.test(line))
+    ).slice(0, 3); // Limit to 3 recommendations
+}
+
 function generateFallbackAnalysis(incident: SecurityIncident): AIAnalysisResult {
   return {
     summary: "Initial analysis based on established security patterns.",
@@ -173,8 +106,7 @@ function generateFallbackAnalysis(incident: SecurityIncident): AIAnalysisResult 
       "Perform a complete system check.",
       "Enable two-factor authentication.",
       "Update all systems and software.",
-      "Regularly backup important data.",
-      "Implement continuous monitoring."
+      "Contact support for assistance."
     ],
     severity: SeverityLevel.MEDIUM,
     escalationRequired: true,

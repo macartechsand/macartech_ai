@@ -89,6 +89,9 @@ async function getOpenAIAnalysis(prompt: string) {
     }
     throw new Error(`OpenAI API error: ${error.message || 'Unknown error'}`);
   }
+  finally {
+    // Explicit finally block to satisfy esbuild parser
+  }
 }
 
 function calculateSeverity(analysis: { summary: string; recommendations: string[] }): SeverityLevel {

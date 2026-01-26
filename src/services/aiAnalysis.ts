@@ -1,35 +1,31 @@
 import { SecurityIncident, AIAnalysisResult, SeverityLevel } from '../types';
 import OpenAI from 'openai';
-import { GoogleGenerativeAI } from '@google/generative-ai';
 
 const openai = new OpenAI({
   apiKey: import.meta.env.VITE_OPENAI_API_KEY,
   dangerouslyAllowBrowser: true
 });
 
-const genAI = new GoogleGenerativeAI(import.meta.env.VITE_GEMINI_API_KEY);
-
 export const analyzeSecurityIncident = async (incident: SecurityIncident): Promise<AIAnalysisResult> => {
   try {
+    // Validate API key
+    if (!import.meta.env.VITE_OPENAI_API_KEY) {
+      console.error('OpenAI API key is missing');
+      return generateFallbackAnalysis(incident);
+    }
+
     const description = incident.description;
     const serviceType = incident.serviceType;
 
     const isSupport = serviceType === 'Technical Support';
 
     const prompt = isSupport
-      ? `You are a technical support assistant. The user reported this issue: ${description}. Provide 3 simple, actionable solutions.`
-      : `You are a cybersecurity assistant. Analyze this security incident: ${description}. Provide immediate containment and mitigation steps.`;
+      ? `You are a technical support assistant. The user reported this issue: "${description}". Provide 3 simple, actionable solutions in a numbered list.`
+      : `You are a cybersecurity assistant. Analyze this security incident: "${description}". Provide 3 immediate containment and mitigation steps in a numbered list.`;
 
-
-    // Use only one AI service to reduce costs
-    let aiResponse = '';
-    
-    try {
-      aiResponse = await getOpenAIAnalysis(prompt);
-    } catch (error) {
-      console.warn('AI analysis failed:', error);
-      return generateFallbackAnalysis(incident);
-    }
+    console.log('Sending request to OpenAI with prompt:', prompt);
+    const aiResponse = await getOpenAIAnalysis(prompt);
+    console.log('OpenAI response received:', aiResponse);
 
     return {
       summary: aiResponse.split('\n')[0] || "Analysis completed",
@@ -43,15 +39,21 @@ export const analyzeSecurityIncident = async (incident: SecurityIncident): Promi
       }
     };
   } catch (error: any) {
-    console.error('Error in AI analysis:', error);
+    console.error('Error in AI analysis:', error.message || error);
     return {
       ...generateFallbackAnalysis(incident),
-      errorMessage: "An error occurred during analysis. Our team has been notified and is working to resolve the issue."
+      aiResponses: {
+        chatgpt: `Error: ${error.message || 'AI service temporarily unavailable'}`,
+        gemini: ""
+      }
     };
   }
 };
 
 async function getOpenAIAnalysis(prompt: string) {
+  try {
+    console.log('Making OpenAI API call...');
+    
   const completion = await openai.chat.completions.create({
     model: "gpt-4o-mini",
     messages: [
@@ -93,30 +95,63 @@ function calculateSeverity(analysis: { summary: string; recommendations: string[
 }
 
 function extractRecommendations(text: string): string[] {
-  return text
+  const recommendations = text
     .split('\n')
     .map(line => line.trim())
     .filter(line =>
       line.length > 0 &&
       (/^\d+[\.\-)]\s/.test(line) || /^[\-\•]\s/.test(line))
-    ).slice(0, 3); // Limit to 3 recommendations
+    )
+    .map(line => line.replace(/^\d+[\.\-\)]\s*/, '').replace(/^[\-\•]\s*/, ''))
+    .slice(0, 3);
+
+  // If no numbered recommendations found, split by sentences and take first 3
+  if (recommendations.length === 0) {
+    return text
+      .split(/[.!?]+/)
+      .map(sentence => sentence.trim())
+      .filter(sentence => sentence.length > 10)
+      .slice(0, 3);
+  }
+
+  return recommendations;
 }
 
 function generateFallbackAnalysis(incident: SecurityIncident): AIAnalysisResult {
-  return {
-    summary: "Initial analysis based on established security patterns.",
-    recommendations: [
-      "Perform a complete system check.",
-      "Enable two-factor authentication.",
-      "Update all systems and software.",
-      "Contact support for assistance."
+  const isSupport = incident.serviceType === 'Technical Support';
+  
+          content: "You are a helpful tech support assistant. Provide clear, actionable solutions in numbered format."
+    summary: isSupport 
+      ? "Technical support analysis - basic troubleshooting steps provided."
+      : "Security incident analysis - basic security measures recommended.",
+    recommendations: isSupport ? [
+      "Restart the affected system or application",
+      "Check for recent software updates or changes",
+      "Verify network connectivity and settings"
+    ] : [
+      "Disconnect affected systems from network if compromised",
+      "Change all relevant passwords immediately",
+      "Run a full system security scan"
     ],
     severity: SeverityLevel.MEDIUM,
     escalationRequired: true,
     contactRecommendation: "A Macartech specialist will contact you to provide personalized assistance.",
+    console.log('OpenAI API response:', completion);
+    
     aiResponses: {
-      chatgpt: "Service temporarily unavailable",
+      chatgpt: "AI analysis service is temporarily unavailable. Basic recommendations provided based on incident type.",
       gemini: "Service temporarily unavailable"
     }
   };
+  } catch (error: any) {
+    console.error('OpenAI API error:', error);
+    if (error.status === 401) {
+      throw new Error("Invalid API key - please check your OpenAI API key");
+    } else if (error.status === 429) {
+      throw new Error("Rate limit exceeded - please try again later");
+    } else if (error.status === 500) {
+      throw new Error("OpenAI service error - please try again later");
+    }
+    throw new Error(`OpenAI API error: ${error.message || 'Unknown error'}`);
+  }
 }

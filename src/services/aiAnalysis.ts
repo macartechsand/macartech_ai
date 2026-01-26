@@ -14,9 +14,12 @@ export const analyzeSecurityIncident = async (incident: SecurityIncident): Promi
     const description = incident.description;
     const serviceType = incident.serviceType;
 
-    const prompt = serviceType === ServiceType.SUPPORT 
-      ? `Help with this technical issue: ${description}. Provide 3 simple solutions.`
-      : `Analyze this security incident: ${description}. Provide immediate steps to take.`;
+    const isSupport = incident.serviceType === 'SUPPORT';
+
+const prompt = isSupport
+  ? `You are a technical support assistant. The user reported this issue: ${description}. Provide 3 simple, actionable solutions.`
+  : `You are a cybersecurity assistant. Analyze this security incident: ${description}. Provide immediate containment and mitigation steps.`;
+
 
     // Use only one AI service to reduce costs
     let aiResponse = '';

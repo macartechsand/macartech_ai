@@ -54,28 +54,41 @@ async function getOpenAIAnalysis(prompt: string) {
   try {
     console.log('Making OpenAI API call...');
     
-  const completion = await openai.chat.completions.create({
-    model: "gpt-4o-mini",
-    messages: [
-      {
-        role: "system",
-        content: "You are a tech support assistant. Provide clear, simple solutions."
-      },
-      {
-        role: "user",
-        content: prompt
-      }
-    ],
-    temperature: 0.7,
-    max_tokens: 300
-  });
+    const completion = await openai.chat.completions.create({
+      model: "gpt-4o-mini",
+      messages: [
+        {
+          role: "system",
+          content: "You are a tech support assistant. Provide clear, simple solutions."
+        },
+        {
+          role: "user",
+          content: prompt
+        }
+      ],
+      temperature: 0.7,
+      max_tokens: 300
+    });
 
-  const content = completion.choices?.[0]?.message?.content;
-  if (!content || !content.trim()) {
-    throw new Error("OpenAI returned empty response");
+    console.log('OpenAI API response:', completion);
+
+    const content = completion.choices?.[0]?.message?.content;
+    if (!content || !content.trim()) {
+      throw new Error("OpenAI returned empty response");
+    }
+
+    return content;
+  } catch (error: any) {
+    console.error('OpenAI API error:', error);
+    if (error.status === 401) {
+      throw new Error("Invalid API key - please check your OpenAI API key");
+    } else if (error.status === 429) {
+      throw new Error("Rate limit exceeded - please try again later");
+    } else if (error.status === 500) {
+      throw new Error("OpenAI service error - please try again later");
+    }
+    throw new Error(`OpenAI API error: ${error.message || 'Unknown error'}`);
   }
-
-  return content;
 }
 
 function calculateSeverity(analysis: { summary: string; recommendations: string[] }): SeverityLevel {
@@ -120,7 +133,7 @@ function extractRecommendations(text: string): string[] {
 function generateFallbackAnalysis(incident: SecurityIncident): AIAnalysisResult {
   const isSupport = incident.serviceType === 'Technical Support';
   
-          content: "You are a helpful tech support assistant. Provide clear, actionable solutions in numbered format."
+  return {
     summary: isSupport 
       ? "Technical support analysis - basic troubleshooting steps provided."
       : "Security incident analysis - basic security measures recommended.",
@@ -136,22 +149,9 @@ function generateFallbackAnalysis(incident: SecurityIncident): AIAnalysisResult 
     severity: SeverityLevel.MEDIUM,
     escalationRequired: true,
     contactRecommendation: "A Macartech specialist will contact you to provide personalized assistance.",
-    console.log('OpenAI API response:', completion);
-    
     aiResponses: {
       chatgpt: "AI analysis service is temporarily unavailable. Basic recommendations provided based on incident type.",
       gemini: "Service temporarily unavailable"
     }
   };
-  } catch (error: any) {
-    console.error('OpenAI API error:', error);
-    if (error.status === 401) {
-      throw new Error("Invalid API key - please check your OpenAI API key");
-    } else if (error.status === 429) {
-      throw new Error("Rate limit exceeded - please try again later");
-    } else if (error.status === 500) {
-      throw new Error("OpenAI service error - please try again later");
-    }
-    throw new Error(`OpenAI API error: ${error.message || 'Unknown error'}`);
-  }
 }

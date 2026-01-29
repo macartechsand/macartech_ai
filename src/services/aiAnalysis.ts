@@ -10,7 +10,14 @@ export const analyzeSecurityIncident = async (incident: SecurityIncident): Promi
   try {
     // Validate API key
     if (!import.meta.env.VITE_OPENAI_API_KEY) {
-      console.error('OpenAI API key is missing');
+      console.warn('OpenAI API key is missing - using fallback analysis');
+      return generateFallbackAnalysis(incident);
+    }
+
+    // Validate API key format
+    const apiKey = import.meta.env.VITE_OPENAI_API_KEY;
+    if (!apiKey.startsWith('sk-')) {
+      console.warn('OpenAI API key appears to be invalid format - using fallback analysis');
       return generateFallbackAnalysis(incident);
     }
 
@@ -23,9 +30,9 @@ export const analyzeSecurityIncident = async (incident: SecurityIncident): Promi
       ? `You are a technical support assistant. The user reported this issue: "${description}". Provide 3 simple, actionable solutions in a numbered list.`
       : `You are a cybersecurity assistant. Analyze this security incident: "${description}". Provide 3 immediate containment and mitigation steps in a numbered list.`;
 
-    console.log('Sending request to OpenAI with prompt:', prompt);
+    console.log('Attempting OpenAI API request...');
     const aiResponse = await getOpenAIAnalysis(prompt);
-    console.log('OpenAI response received:', aiResponse);
+    console.log('OpenAI API request successful');
 
     return {
       summary: aiResponse.split('\n')[0] || "Analysis completed",
@@ -39,11 +46,11 @@ export const analyzeSecurityIncident = async (incident: SecurityIncident): Promi
       }
     };
   } catch (error: any) {
-    console.error('Error in AI analysis:', error.message || error);
+    console.warn('OpenAI API unavailable, using fallback analysis:', error.message || error);
     return {
       ...generateFallbackAnalysis(incident),
       aiResponses: {
-        chatgpt: `Error: ${error.message || 'AI service temporarily unavailable'}`,
+        chatgpt: 'AI service temporarily unavailable - using fallback recommendations',
         gemini: ""
       }
     };
@@ -52,8 +59,6 @@ export const analyzeSecurityIncident = async (incident: SecurityIncident): Promi
 
 async function getOpenAIAnalysis(prompt: string) {
   try {
-    console.log('Making OpenAI API call...');
-    
     const completion = await openai.chat.completions.create({
       model: "gpt-4o-mini",
       messages: [
@@ -67,10 +72,9 @@ async function getOpenAIAnalysis(prompt: string) {
         }
       ],
       temperature: 0.7,
-      max_tokens: 300
+      max_tokens: 300,
+      timeout: 10000 // 10 second timeout
     });
-
-    console.log('OpenAI API response:', completion);
 
     const content = completion.choices?.[0]?.message?.content;
     if (!content || !content.trim()) {
@@ -79,15 +83,18 @@ async function getOpenAIAnalysis(prompt: string) {
 
     return content;
   } catch (error: any) {
-    console.error('OpenAI API error:', error);
+    // Handle specific error types without throwing
     if (error.status === 401) {
-      throw new Error("Invalid API key - please check your OpenAI API key");
+      throw new Error("Invalid API key");
     } else if (error.status === 429) {
-      throw new Error("Rate limit exceeded - please try again later");
+      throw new Error("Rate limit exceeded");
     } else if (error.status === 500) {
-      throw new Error("OpenAI service error - please try again later");
+      throw new Error("OpenAI service error");
+    } else if (error.code === 'ENOTFOUND' || error.code === 'ECONNREFUSED' || error.message?.includes('Connection error')) {
+      throw new Error("Network connection error");
+    } else {
+      throw new Error("API service unavailable");
     }
-    throw new Error(`OpenAI API error: ${error.message || 'Unknown error'}`);
   }
   finally {
     // Explicit finally block to satisfy esbuild parser
@@ -138,8 +145,8 @@ function generateFallbackAnalysis(incident: SecurityIncident): AIAnalysisResult 
   
   return {
     summary: isSupport 
-      ? "Technical support analysis - basic troubleshooting steps provided."
-      : "Security incident analysis - basic security measures recommended.",
+      ? "Technical support analysis completed - troubleshooting steps provided below."
+      : "Security incident analysis completed - security measures recommended below.",
     recommendations: isSupport ? [
       "Restart the affected system or application",
       "Check for recent software updates or changes",
@@ -153,8 +160,8 @@ function generateFallbackAnalysis(incident: SecurityIncident): AIAnalysisResult 
     escalationRequired: true,
     contactRecommendation: "A Macartech specialist will contact you to provide personalized assistance.",
     aiResponses: {
-      chatgpt: "AI analysis service is temporarily unavailable. Basic recommendations provided based on incident type.",
-      gemini: "Service temporarily unavailable"
+      chatgpt: "Analysis completed using built-in recommendations. AI enhancement temporarily unavailable.",
+      gemini: ""
     }
   };
 }

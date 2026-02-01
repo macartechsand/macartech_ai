@@ -36,13 +36,13 @@ ${analysis.recommendations.map((rec, index) => `${index + 1}. ${rec}`).join('\n'
         </div>
         
         <div className="space-y-6">
-          {analysis.aiResponses?.chatgpt && (
+          {analysis.aiResponses?.gemini && (
             <div className="p-4 rounded-lg bg-blue-50 dark:bg-blue-900/30 border border-blue-200 dark:border-blue-800">
               <div className="flex items-center space-x-2 mb-2">
                 <Bot className="w-5 h-5 text-blue-700 dark:text-blue-400" />
-                <h3 className="font-semibold text-slate-800 dark:text-white">AI Analysis</h3>
+                <h3 className="font-semibold text-slate-800 dark:text-white">Gemini AI Analysis</h3>
               </div>
-              <p className="text-slate-700 dark:text-slate-300 whitespace-pre-line">{analysis.aiResponses.chatgpt}</p>
+              <p className="text-slate-700 dark:text-slate-300 whitespace-pre-line">{analysis.aiResponses.gemini}</p>
             </div>
           )}
           

@@ -1,10 +1,8 @@
 import { SecurityIncident, AIAnalysisResult, SeverityLevel } from '../types';
-import OpenAI from 'openai';
+import { GoogleGenerativeAI } from '@google/generative-ai';
 
-const openai = new OpenAI({
-  apiKey: import.meta.env.VITE_OPENAI_API_KEY,
-  dangerouslyAllowBrowser: true
-});
+// Initialize Gemini AI
+const genAI = new GoogleGenerativeAI(import.meta.env.VITE_GEMINI_API_KEY || '');
 
 export const analyzeSecurityIncident = async (incident: SecurityIncident): Promise<AIAnalysisResult> => {
   try {
@@ -14,10 +12,10 @@ export const analyzeSecurityIncident = async (incident: SecurityIncident): Promi
     const isSupport = serviceType === 'Technical Support';
 
     const prompt = isSupport
-      ? `You are a technical support assistant. The user reported this issue: "${description}". Provide 3 simple, actionable solutions in a numbered list.`
-      : `You are a cybersecurity assistant. Analyze this security incident: "${description}". Provide 3 immediate containment and mitigation steps in a numbered list.`;
+      ? `You are a technical support assistant. The user reported this issue: "${description}". Provide 3 simple, actionable solutions in a numbered list format.`
+      : `You are a cybersecurity assistant. Analyze this security incident: "${description}". Provide 3 immediate containment and mitigation steps in a numbered list format.`;
 
-    const aiResponse = await getOpenAIAnalysis(prompt);
+    const aiResponse = await getGeminiAnalysis(prompt);
 
     return {
       summary: "AI Analysis completed - recommendations provided below",
@@ -26,85 +24,67 @@ export const analyzeSecurityIncident = async (incident: SecurityIncident): Promi
       escalationRequired: true,
       contactRecommendation: "A Macartech specialist will contact you to provide personalized assistance.",
       aiResponses: {
-        chatgpt: aiResponse,
-        gemini: ""
+        chatgpt: "",
+        gemini: aiResponse
       }
     };
   } catch (error: any) {
-    console.log('Using fallback analysis');
+    console.warn('Gemini API Error, using fallback:', error.message);
     return {
       ...generateFallbackAnalysis(incident),
       aiResponses: {
-        chatgpt: generateFallbackResponse(incident),
-        gemini: ""
+        chatgpt: "",
+        gemini: generateFallbackResponse(incident)
       }
     };
   }
 };
 
-async function getOpenAIAnalysis(prompt: string) {
+async function getGeminiAnalysis(prompt: string): Promise<string> {
   try {
     // Validate API key
-    const apiKey = import.meta.env.VITE_OPENAI_API_KEY;
-    if (!apiKey || !apiKey.startsWith('sk-proj-')) {
-      throw new Error("Invalid or missing API key");
+    const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
+    if (!apiKey || apiKey.trim() === '') {
+      throw new Error("Gemini API key not found");
     }
 
-    const completion = await openai.chat.completions.create({
-      model: "gpt-3.5-turbo",
-      messages: [
-        {
-          role: "system",
-          content: "You are a helpful technical and security assistant. Provide clear, actionable recommendations in a numbered list format."
-        },
-        {
-          role: "user",
-          content: prompt
-        }
-      ],
-      temperature: 0.3,
-      max_tokens: 500
-    });
+    // Get the generative model
+    const model = genAI.getGenerativeModel({ model: "gemini-pro" });
 
-    const content = completion.choices?.[0]?.message?.content;
-    if (!content || !content.trim()) {
-      throw new Error("OpenAI returned empty response");
+    // Create the full prompt with system instructions
+    const fullPrompt = `You are a helpful technical and security assistant. Provide clear, actionable recommendations in a numbered list format.
+
+User request: ${prompt}
+
+Please respond with specific, actionable steps in a numbered list.`;
+
+    // Generate content
+    const result = await model.generateContent(fullPrompt);
+    const response = await result.response;
+    const text = response.text();
+
+    if (!text || text.trim() === '') {
+      throw new Error("Gemini returned empty response");
     }
 
-    return content;
+    return text;
   } catch (error: any) {
-    console.log('OpenAI API Error:', error.message);
+    console.warn('Gemini API Error:', error.message);
     
     // Check for specific error types
-    if (error.status === 401 || error.message?.includes('Incorrect API key')) {
-      throw new Error("Authentication failed - check API key");
+    if (error.message?.includes('API key')) {
+      throw new Error("Authentication failed - check Gemini API key");
     }
-    if (error.status === 429) {
+    if (error.message?.includes('quota') || error.message?.includes('limit')) {
       throw new Error("Rate limit exceeded - try again later");
     }
     if (error.status >= 500) {
-      throw new Error("OpenAI service temporarily unavailable");
+      throw new Error("Gemini service temporarily unavailable");
     }
     
     // For any other error, throw a generic message
     throw new Error("API request failed");
   }
-}
-
-function calculateSeverity(analysis: { summary: string; recommendations: string[] }): SeverityLevel {
-  const indicators = {
-    critical: ['critical', 'urgent', 'severe', 'compromised', 'breach'],
-    high: ['high', 'important', 'elevated risk'],
-    medium: ['medium', 'moderate', 'attention'],
-    low: ['low', 'minor', 'preventive']
-  };
-
-  const fullText = (analysis.summary + ' ' + analysis.recommendations.join(' ')).toLowerCase();
-
-  if (indicators.critical.some(i => fullText.includes(i))) return SeverityLevel.CRITICAL;
-  if (indicators.high.some(i => fullText.includes(i))) return SeverityLevel.HIGH;
-  if (indicators.medium.some(i => fullText.includes(i))) return SeverityLevel.MEDIUM;
-  return SeverityLevel.LOW;
 }
 
 function extractRecommendations(text: string): string[] {
@@ -148,11 +128,7 @@ function generateFallbackAnalysis(incident: SecurityIncident): AIAnalysisResult 
     ],
     severity: SeverityLevel.MEDIUM,
     escalationRequired: true,
-    contactRecommendation: "A Macartech specialist will contact you to provide personalized assistance.",
-    aiResponses: {
-      chatgpt: generateFallbackResponse(incident),
-      gemini: ""
-    }
+    contactRecommendation: "A Macartech specialist will contact you to provide personalized assistance."
   };
 }
 

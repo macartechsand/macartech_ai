@@ -8,19 +8,6 @@ const openai = new OpenAI({
 
 export const analyzeSecurityIncident = async (incident: SecurityIncident): Promise<AIAnalysisResult> => {
   try {
-    // Validate API key
-    if (!import.meta.env.VITE_OPENAI_API_KEY) {
-      console.warn('OpenAI API key is missing - using fallback analysis');
-      return generateFallbackAnalysis(incident);
-    }
-
-    // Validate API key format
-    const apiKey = import.meta.env.VITE_OPENAI_API_KEY;
-    if (!apiKey.startsWith('sk-')) {
-      console.warn('OpenAI API key appears to be invalid format - using fallback analysis');
-      return generateFallbackAnalysis(incident);
-    }
-
     const description = incident.description;
     const serviceType = incident.serviceType;
 
@@ -30,12 +17,10 @@ export const analyzeSecurityIncident = async (incident: SecurityIncident): Promi
       ? `You are a technical support assistant. The user reported this issue: "${description}". Provide 3 simple, actionable solutions in a numbered list.`
       : `You are a cybersecurity assistant. Analyze this security incident: "${description}". Provide 3 immediate containment and mitigation steps in a numbered list.`;
 
-    console.log('Attempting OpenAI API request...');
     const aiResponse = await getOpenAIAnalysis(prompt);
-    console.log('OpenAI API request successful');
 
     return {
-      summary: aiResponse.split('\n')[0] || "Analysis completed",
+      summary: "AI Analysis completed - recommendations provided below",
       recommendations: extractRecommendations(aiResponse),
       severity: SeverityLevel.MEDIUM,
       escalationRequired: true,
@@ -46,7 +31,7 @@ export const analyzeSecurityIncident = async (incident: SecurityIncident): Promi
       }
     };
   } catch (error: any) {
-    console.warn('OpenAI API unavailable, using fallback analysis:', error.message || error);
+    console.log('Using fallback analysis');
     return {
       ...generateFallbackAnalysis(incident),
       aiResponses: {
@@ -59,21 +44,26 @@ export const analyzeSecurityIncident = async (incident: SecurityIncident): Promi
 
 async function getOpenAIAnalysis(prompt: string) {
   try {
+    // Validate API key
+    const apiKey = import.meta.env.VITE_OPENAI_API_KEY;
+    if (!apiKey || !apiKey.startsWith('sk-proj-')) {
+      throw new Error("Invalid or missing API key");
+    }
+
     const completion = await openai.chat.completions.create({
-      model: "gpt-4o-mini",
+      model: "gpt-3.5-turbo",
       messages: [
         {
           role: "system",
-          content: "You are a tech support assistant. Provide clear, simple solutions."
+          content: "You are a helpful technical and security assistant. Provide clear, actionable recommendations in a numbered list format."
         },
         {
           role: "user",
           content: prompt
         }
       ],
-      temperature: 0.7,
-      max_tokens: 300,
-      timeout: 10000 // 10 second timeout
+      temperature: 0.3,
+      max_tokens: 500
     });
 
     const content = completion.choices?.[0]?.message?.content;
@@ -83,21 +73,21 @@ async function getOpenAIAnalysis(prompt: string) {
 
     return content;
   } catch (error: any) {
-    // Handle specific error types without throwing
-    if (error.status === 401) {
-      throw new Error("Invalid API key");
-    } else if (error.status === 429) {
-      throw new Error("Rate limit exceeded");
-    } else if (error.status === 500) {
-      throw new Error("OpenAI service error");
-    } else if (error.code === 'ENOTFOUND' || error.code === 'ECONNREFUSED' || error.message?.includes('Connection error')) {
-      throw new Error("Network connection error");
-    } else {
-      throw new Error("API service unavailable");
+    console.log('OpenAI API Error:', error.message);
+    
+    // Check for specific error types
+    if (error.status === 401 || error.message?.includes('Incorrect API key')) {
+      throw new Error("Authentication failed - check API key");
     }
-  }
-  finally {
-    // Explicit finally block to satisfy esbuild parser
+    if (error.status === 429) {
+      throw new Error("Rate limit exceeded - try again later");
+    }
+    if (error.status >= 500) {
+      throw new Error("OpenAI service temporarily unavailable");
+    }
+    
+    // For any other error, throw a generic message
+    throw new Error("API request failed");
   }
 }
 

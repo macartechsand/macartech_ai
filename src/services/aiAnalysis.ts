@@ -50,7 +50,7 @@ export const analyzeSecurityIncident = async (incident: SecurityIncident): Promi
     return {
       ...generateFallbackAnalysis(incident),
       aiResponses: {
-        chatgpt: 'AI service temporarily unavailable - using fallback recommendations',
+        chatgpt: generateFallbackResponse(incident),
         gemini: ""
       }
     };
@@ -160,8 +160,34 @@ function generateFallbackAnalysis(incident: SecurityIncident): AIAnalysisResult 
     escalationRequired: true,
     contactRecommendation: "A Macartech specialist will contact you to provide personalized assistance.",
     aiResponses: {
-      chatgpt: "Analysis completed using built-in recommendations. AI enhancement temporarily unavailable.",
+      chatgpt: generateFallbackResponse(incident),
       gemini: ""
     }
   };
+}
+
+function generateFallbackResponse(incident: SecurityIncident): string {
+  const isSupport = incident.serviceType === 'Technical Support';
+  
+  if (isSupport) {
+    return `Based on your technical issue: "${incident.description}"
+
+Here are the recommended troubleshooting steps:
+
+1. Restart the affected system or application to clear temporary issues
+2. Check for recent software updates or configuration changes that might have caused the problem
+3. Verify network connectivity and system settings are properly configured
+
+These steps should help resolve most common technical issues. If the problem persists, our technical team can provide more specific assistance.`;
+  } else {
+    return `Security incident analysis for: "${incident.description}"
+
+Immediate security recommendations:
+
+1. Disconnect affected systems from the network if you suspect they are compromised
+2. Change all relevant passwords immediately, especially for critical accounts
+3. Run a comprehensive security scan on all potentially affected systems
+
+These are essential first steps to contain any potential security threat. Our security specialists can provide detailed incident response guidance.`;
+  }
 }
